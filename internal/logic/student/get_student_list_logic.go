@@ -42,7 +42,7 @@ func (l *GetStudentListLogic) GetStudentList(req *types.StudentListReq) (*types.
 	}
 
 	resp := &types.StudentListResp{}
-	resp.Msg = l.svcCtx.Trans.Trans(l.ctx, i18n.CreateSuccess)
+	resp.Msg = l.svcCtx.Trans.Trans(l.ctx, i18n.Success)
 	resp.Data.Total = data.PageDetails.Total
 
 	for _, v := range data.List {
