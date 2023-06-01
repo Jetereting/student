@@ -12,10 +12,10 @@ type (
         Status  uint8 `json:"status,optional"`
 
         // Name
-        Name  json.RawMessage `json:"name,optional"`
+        Name  string `json:"name,optional"`
 
         // IdCard
-        IdCard  json.RawMessage `json:"idCard,optional"`
+        IdCard  string `json:"idCard,optional"`
     }
 
     // The response data of student list | Student列表数据
@@ -37,6 +37,12 @@ type (
     // Get student list request params | Student列表请求参数
     StudentListReq {
         PageInfo
+
+        // Name
+        Name  string `json:"name,optional"`
+
+        // IdCard
+        IdCard  string `json:"idCard,optional"`
     }
 
     // Student information response | Student信息返回体

@@ -26,8 +26,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "sort", Type: field.TypeUint32, Default: 1},
 		{Name: "status", Type: field.TypeUint8, Nullable: true, Default: 1},
-		{Name: "name", Type: field.TypeJSON},
-		{Name: "id_card", Type: field.TypeJSON},
+		{Name: "name", Type: field.TypeString},
+		{Name: "id_card", Type: field.TypeString},
 	}
 	// BStudentTable holds the schema information for the "b_student" table.
 	BStudentTable = &schema.Table{

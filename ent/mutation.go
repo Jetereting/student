@@ -304,10 +304,8 @@ type StudentMutation struct {
 	addsort       *int32
 	status        *uint8
 	addstatus     *int8
-	name          *[]string
-	appendname    []string
-	id_card       *[]string
-	appendid_card []string
+	name          *string
+	id_card       *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Student, error)
@@ -617,13 +615,12 @@ func (m *StudentMutation) ResetStatus() {
 }
 
 // SetName sets the "name" field.
-func (m *StudentMutation) SetName(s []string) {
+func (m *StudentMutation) SetName(s string) {
 	m.name = &s
-	m.appendname = nil
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *StudentMutation) Name() (r []string, exists bool) {
+func (m *StudentMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -634,7 +631,7 @@ func (m *StudentMutation) Name() (r []string, exists bool) {
 // OldName returns the old "name" field's value of the Student entity.
 // If the Student object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StudentMutation) OldName(ctx context.Context) (v []string, err error) {
+func (m *StudentMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -648,33 +645,18 @@ func (m *StudentMutation) OldName(ctx context.Context) (v []string, err error) {
 	return oldValue.Name, nil
 }
 
-// AppendName adds s to the "name" field.
-func (m *StudentMutation) AppendName(s []string) {
-	m.appendname = append(m.appendname, s...)
-}
-
-// AppendedName returns the list of values that were appended to the "name" field in this mutation.
-func (m *StudentMutation) AppendedName() ([]string, bool) {
-	if len(m.appendname) == 0 {
-		return nil, false
-	}
-	return m.appendname, true
-}
-
 // ResetName resets all changes to the "name" field.
 func (m *StudentMutation) ResetName() {
 	m.name = nil
-	m.appendname = nil
 }
 
 // SetIDCard sets the "id_card" field.
-func (m *StudentMutation) SetIDCard(s []string) {
+func (m *StudentMutation) SetIDCard(s string) {
 	m.id_card = &s
-	m.appendid_card = nil
 }
 
 // IDCard returns the value of the "id_card" field in the mutation.
-func (m *StudentMutation) IDCard() (r []string, exists bool) {
+func (m *StudentMutation) IDCard() (r string, exists bool) {
 	v := m.id_card
 	if v == nil {
 		return
@@ -685,7 +667,7 @@ func (m *StudentMutation) IDCard() (r []string, exists bool) {
 // OldIDCard returns the old "id_card" field's value of the Student entity.
 // If the Student object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StudentMutation) OldIDCard(ctx context.Context) (v []string, err error) {
+func (m *StudentMutation) OldIDCard(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldIDCard is only allowed on UpdateOne operations")
 	}
@@ -699,23 +681,9 @@ func (m *StudentMutation) OldIDCard(ctx context.Context) (v []string, err error)
 	return oldValue.IDCard, nil
 }
 
-// AppendIDCard adds s to the "id_card" field.
-func (m *StudentMutation) AppendIDCard(s []string) {
-	m.appendid_card = append(m.appendid_card, s...)
-}
-
-// AppendedIDCard returns the list of values that were appended to the "id_card" field in this mutation.
-func (m *StudentMutation) AppendedIDCard() ([]string, bool) {
-	if len(m.appendid_card) == 0 {
-		return nil, false
-	}
-	return m.appendid_card, true
-}
-
 // ResetIDCard resets all changes to the "id_card" field.
 func (m *StudentMutation) ResetIDCard() {
 	m.id_card = nil
-	m.appendid_card = nil
 }
 
 // Where appends a list predicates to the StudentMutation builder.
@@ -850,14 +818,14 @@ func (m *StudentMutation) SetField(name string, value ent.Value) error {
 		m.SetStatus(v)
 		return nil
 	case student.FieldName:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
 	case student.FieldIDCard:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

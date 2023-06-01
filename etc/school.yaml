@@ -4,7 +4,7 @@ Port: 9100
 Timeout: 30000
 
 Auth:
-  AccessSecret: # the same as core
+  AccessSecret: jS6VKDtsJf3z1n2VKDtsJf3z1n2
   AccessExpire: 259200
 
 Log:
@@ -12,7 +12,7 @@ Log:
 #  Mode: file
   Encoding: plain
   Path: /home/data/logs/School/api
-  Level: info
+  Level: debug
   Compress: false
   KeepDays: 7
   StackCoolDownMillis: 100

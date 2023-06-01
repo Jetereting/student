@@ -29,6 +29,12 @@ func NewGetStudentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 func (l *GetStudentListLogic) GetStudentList(req *types.StudentListReq) (*types.StudentListResp, error) {
 	var predicates []predicate.Student
+	if req.Name != "" {
+		predicates = append(predicates, student.NameContains(req.Name))
+	}
+	if req.IdCard != "" {
+		predicates = append(predicates, student.IDCardContains(req.IdCard))
+	}
 	data, err := l.svcCtx.DB.Student.Query().Where(predicates...).Page(l.ctx, req.Page, req.PageSize)
 
 	if err != nil {

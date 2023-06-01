@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"school/ent/student"
 	"strings"
@@ -27,9 +26,9 @@ type Student struct {
 	// status 1 normal 2 ban | 状态 1 正常 2 禁用
 	Status uint8 `json:"status,omitempty"`
 	// 姓名
-	Name []string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 	// 身份证号
-	IDCard       []string `json:"id_card,omitempty"`
+	IDCard       string `json:"id_card,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -38,10 +37,10 @@ func (*Student) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case student.FieldName, student.FieldIDCard:
-			values[i] = new([]byte)
 		case student.FieldID, student.FieldSort, student.FieldStatus:
 			values[i] = new(sql.NullInt64)
+		case student.FieldName, student.FieldIDCard:
+			values[i] = new(sql.NullString)
 		case student.FieldCreatedAt, student.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -90,20 +89,16 @@ func (s *Student) assignValues(columns []string, values []any) error {
 				s.Status = uint8(value.Int64)
 			}
 		case student.FieldName:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &s.Name); err != nil {
-					return fmt.Errorf("unmarshal field name: %w", err)
-				}
+			} else if value.Valid {
+				s.Name = value.String
 			}
 		case student.FieldIDCard:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id_card", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &s.IDCard); err != nil {
-					return fmt.Errorf("unmarshal field id_card: %w", err)
-				}
+			} else if value.Valid {
+				s.IDCard = value.String
 			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
@@ -154,10 +149,10 @@ func (s *Student) String() string {
 	builder.WriteString(fmt.Sprintf("%v", s.Status))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(fmt.Sprintf("%v", s.Name))
+	builder.WriteString(s.Name)
 	builder.WriteString(", ")
 	builder.WriteString("id_card=")
-	builder.WriteString(fmt.Sprintf("%v", s.IDCard))
+	builder.WriteString(s.IDCard)
 	builder.WriteByte(')')
 	return builder.String()
 }

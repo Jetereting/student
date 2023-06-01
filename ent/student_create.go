@@ -77,13 +77,13 @@ func (sc *StudentCreate) SetNillableStatus(u *uint8) *StudentCreate {
 }
 
 // SetName sets the "name" field.
-func (sc *StudentCreate) SetName(s []string) *StudentCreate {
+func (sc *StudentCreate) SetName(s string) *StudentCreate {
 	sc.mutation.SetName(s)
 	return sc
 }
 
 // SetIDCard sets the "id_card" field.
-func (sc *StudentCreate) SetIDCard(s []string) *StudentCreate {
+func (sc *StudentCreate) SetIDCard(s string) *StudentCreate {
 	sc.mutation.SetIDCard(s)
 	return sc
 }
@@ -213,11 +213,11 @@ func (sc *StudentCreate) createSpec() (*Student, *sqlgraph.CreateSpec) {
 		_node.Status = value
 	}
 	if value, ok := sc.mutation.Name(); ok {
-		_spec.SetField(student.FieldName, field.TypeJSON, value)
+		_spec.SetField(student.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := sc.mutation.IDCard(); ok {
-		_spec.SetField(student.FieldIDCard, field.TypeJSON, value)
+		_spec.SetField(student.FieldIDCard, field.TypeString, value)
 		_node.IDCard = value
 	}
 	return _node, _spec

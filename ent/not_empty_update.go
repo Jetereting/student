@@ -33,3 +33,35 @@ func (s *StudentUpdateOne) SetNotEmptyStatus(value uint8) *StudentUpdateOne {
 	}
 	return s
 }
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdate) SetNotEmptyName(value string) *StudentUpdate {
+	if value != "" {
+		return s.SetName(value)
+	}
+	return s
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdateOne) SetNotEmptyName(value string) *StudentUpdateOne {
+	if value != "" {
+		return s.SetName(value)
+	}
+	return s
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdate) SetNotEmptyIDCard(value string) *StudentUpdate {
+	if value != "" {
+		return s.SetIDCard(value)
+	}
+	return s
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdateOne) SetNotEmptyIDCard(value string) *StudentUpdateOne {
+	if value != "" {
+		return s.SetIDCard(value)
+	}
+	return s
+}

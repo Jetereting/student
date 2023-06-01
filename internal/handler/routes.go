@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	base "school/internal/handler/base"
+	student "school/internal/handler/student"
 	"school/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -19,5 +20,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: base.InitDatabaseHandler(serverCtx),
 			},
 		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Authority},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/student/create",
+					Handler: student.CreateStudentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/student/update",
+					Handler: student.UpdateStudentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/student/delete",
+					Handler: student.DeleteStudentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/student/list",
+					Handler: student.GetStudentListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/student",
+					Handler: student.GetStudentByIdHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }

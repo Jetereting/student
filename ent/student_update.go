@@ -12,7 +12,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -84,26 +83,14 @@ func (su *StudentUpdate) ClearStatus() *StudentUpdate {
 }
 
 // SetName sets the "name" field.
-func (su *StudentUpdate) SetName(s []string) *StudentUpdate {
+func (su *StudentUpdate) SetName(s string) *StudentUpdate {
 	su.mutation.SetName(s)
 	return su
 }
 
-// AppendName appends s to the "name" field.
-func (su *StudentUpdate) AppendName(s []string) *StudentUpdate {
-	su.mutation.AppendName(s)
-	return su
-}
-
 // SetIDCard sets the "id_card" field.
-func (su *StudentUpdate) SetIDCard(s []string) *StudentUpdate {
+func (su *StudentUpdate) SetIDCard(s string) *StudentUpdate {
 	su.mutation.SetIDCard(s)
-	return su
-}
-
-// AppendIDCard appends s to the "id_card" field.
-func (su *StudentUpdate) AppendIDCard(s []string) *StudentUpdate {
-	su.mutation.AppendIDCard(s)
 	return su
 }
 
@@ -176,20 +163,10 @@ func (su *StudentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(student.FieldStatus, field.TypeUint8)
 	}
 	if value, ok := su.mutation.Name(); ok {
-		_spec.SetField(student.FieldName, field.TypeJSON, value)
-	}
-	if value, ok := su.mutation.AppendedName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, student.FieldName, value)
-		})
+		_spec.SetField(student.FieldName, field.TypeString, value)
 	}
 	if value, ok := su.mutation.IDCard(); ok {
-		_spec.SetField(student.FieldIDCard, field.TypeJSON, value)
-	}
-	if value, ok := su.mutation.AppendedIDCard(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, student.FieldIDCard, value)
-		})
+		_spec.SetField(student.FieldIDCard, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -266,26 +243,14 @@ func (suo *StudentUpdateOne) ClearStatus() *StudentUpdateOne {
 }
 
 // SetName sets the "name" field.
-func (suo *StudentUpdateOne) SetName(s []string) *StudentUpdateOne {
+func (suo *StudentUpdateOne) SetName(s string) *StudentUpdateOne {
 	suo.mutation.SetName(s)
 	return suo
 }
 
-// AppendName appends s to the "name" field.
-func (suo *StudentUpdateOne) AppendName(s []string) *StudentUpdateOne {
-	suo.mutation.AppendName(s)
-	return suo
-}
-
 // SetIDCard sets the "id_card" field.
-func (suo *StudentUpdateOne) SetIDCard(s []string) *StudentUpdateOne {
+func (suo *StudentUpdateOne) SetIDCard(s string) *StudentUpdateOne {
 	suo.mutation.SetIDCard(s)
-	return suo
-}
-
-// AppendIDCard appends s to the "id_card" field.
-func (suo *StudentUpdateOne) AppendIDCard(s []string) *StudentUpdateOne {
-	suo.mutation.AppendIDCard(s)
 	return suo
 }
 
@@ -388,20 +353,10 @@ func (suo *StudentUpdateOne) sqlSave(ctx context.Context) (_node *Student, err e
 		_spec.ClearField(student.FieldStatus, field.TypeUint8)
 	}
 	if value, ok := suo.mutation.Name(); ok {
-		_spec.SetField(student.FieldName, field.TypeJSON, value)
-	}
-	if value, ok := suo.mutation.AppendedName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, student.FieldName, value)
-		})
+		_spec.SetField(student.FieldName, field.TypeString, value)
 	}
 	if value, ok := suo.mutation.IDCard(); ok {
-		_spec.SetField(student.FieldIDCard, field.TypeJSON, value)
-	}
-	if value, ok := suo.mutation.AppendedIDCard(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, student.FieldIDCard, value)
-		})
+		_spec.SetField(student.FieldIDCard, field.TypeString, value)
 	}
 	_node = &Student{config: suo.config}
 	_spec.Assign = _node.assignValues

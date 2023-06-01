@@ -1,0 +1,5 @@
+### 新增
+POST http://localhost:9100/student/create
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODU4NTU1OTYsImlhdCI6MTY4NTU5NjM5Niwicm9sZUlkIjoiMDAxIiwidXNlcklkIjoiMDE4ODY3NzItYjEzZC03MzMzLWI4NDktMWFkNTA3MGE1Yzk1In0.jOfW7ys4i3NZiOuH-eU9zbnCkrvId5qJDZMnJ0K0HoE
+
+{"name":"12","idCard":"23"}

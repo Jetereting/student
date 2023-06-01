@@ -90,3 +90,13 @@ func BySort(opts ...sql.OrderTermOption) OrderOption {
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByIDCard orders the results by the id_card field.
+func ByIDCard(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIDCard, opts...).ToFunc()
+}

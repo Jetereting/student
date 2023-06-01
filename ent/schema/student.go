@@ -16,8 +16,8 @@ type Student struct {
 // Fields of the Student.
 func (Student) Fields() []ent.Field {
 	return []ent.Field{
-		field.Strings("name").Comment("姓名"),
-		field.Strings("id_card").Comment("身份证号"),
+		field.String("name").Comment("姓名"),
+		field.String("id_card").Comment("身份证号"),
 	}
 }
 

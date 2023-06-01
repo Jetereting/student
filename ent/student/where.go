@@ -74,6 +74,16 @@ func Status(v uint8) predicate.Student {
 	return predicate.Student(sql.FieldEQ(FieldStatus, v))
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldName, v))
+}
+
+// IDCard applies equality check predicate on the "id_card" field. It's identical to IDCardEQ.
+func IDCard(v string) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldIDCard, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Student {
 	return predicate.Student(sql.FieldEQ(FieldCreatedAt, v))
@@ -242,6 +252,136 @@ func StatusIsNil() predicate.Student {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.Student {
 	return predicate.Student(sql.FieldNotNull(FieldStatus))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Student {
+	return predicate.Student(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Student {
+	return predicate.Student(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Student {
+	return predicate.Student(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Student {
+	return predicate.Student(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Student {
+	return predicate.Student(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Student {
+	return predicate.Student(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Student {
+	return predicate.Student(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Student {
+	return predicate.Student(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Student {
+	return predicate.Student(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Student {
+	return predicate.Student(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Student {
+	return predicate.Student(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Student {
+	return predicate.Student(sql.FieldContainsFold(FieldName, v))
+}
+
+// IDCardEQ applies the EQ predicate on the "id_card" field.
+func IDCardEQ(v string) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldIDCard, v))
+}
+
+// IDCardNEQ applies the NEQ predicate on the "id_card" field.
+func IDCardNEQ(v string) predicate.Student {
+	return predicate.Student(sql.FieldNEQ(FieldIDCard, v))
+}
+
+// IDCardIn applies the In predicate on the "id_card" field.
+func IDCardIn(vs ...string) predicate.Student {
+	return predicate.Student(sql.FieldIn(FieldIDCard, vs...))
+}
+
+// IDCardNotIn applies the NotIn predicate on the "id_card" field.
+func IDCardNotIn(vs ...string) predicate.Student {
+	return predicate.Student(sql.FieldNotIn(FieldIDCard, vs...))
+}
+
+// IDCardGT applies the GT predicate on the "id_card" field.
+func IDCardGT(v string) predicate.Student {
+	return predicate.Student(sql.FieldGT(FieldIDCard, v))
+}
+
+// IDCardGTE applies the GTE predicate on the "id_card" field.
+func IDCardGTE(v string) predicate.Student {
+	return predicate.Student(sql.FieldGTE(FieldIDCard, v))
+}
+
+// IDCardLT applies the LT predicate on the "id_card" field.
+func IDCardLT(v string) predicate.Student {
+	return predicate.Student(sql.FieldLT(FieldIDCard, v))
+}
+
+// IDCardLTE applies the LTE predicate on the "id_card" field.
+func IDCardLTE(v string) predicate.Student {
+	return predicate.Student(sql.FieldLTE(FieldIDCard, v))
+}
+
+// IDCardContains applies the Contains predicate on the "id_card" field.
+func IDCardContains(v string) predicate.Student {
+	return predicate.Student(sql.FieldContains(FieldIDCard, v))
+}
+
+// IDCardHasPrefix applies the HasPrefix predicate on the "id_card" field.
+func IDCardHasPrefix(v string) predicate.Student {
+	return predicate.Student(sql.FieldHasPrefix(FieldIDCard, v))
+}
+
+// IDCardHasSuffix applies the HasSuffix predicate on the "id_card" field.
+func IDCardHasSuffix(v string) predicate.Student {
+	return predicate.Student(sql.FieldHasSuffix(FieldIDCard, v))
+}
+
+// IDCardEqualFold applies the EqualFold predicate on the "id_card" field.
+func IDCardEqualFold(v string) predicate.Student {
+	return predicate.Student(sql.FieldEqualFold(FieldIDCard, v))
+}
+
+// IDCardContainsFold applies the ContainsFold predicate on the "id_card" field.
+func IDCardContainsFold(v string) predicate.Student {
+	return predicate.Student(sql.FieldContainsFold(FieldIDCard, v))
 }
 
 // And groups predicates with the AND operator between them.
