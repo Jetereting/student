@@ -1,0 +1,53 @@
+Name: School.api
+Host: 0.0.0.0
+Port: 9100
+Timeout: 30000
+
+Auth:
+  AccessSecret: # the same as core
+  AccessExpire: 259200
+
+Log:
+  ServiceName: SchoolApiLogger
+#  Mode: file
+  Encoding: plain
+  Path: /home/data/logs/School/api
+  Level: info
+  Compress: false
+  KeepDays: 7
+  StackCoolDownMillis: 100
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4000
+  Path: /metrics
+
+
+RedisConf:
+  Host: 10.5.0.3:6379
+  Type: node
+
+DatabaseConf:
+  Type: mysql
+  Host: 10.5.0.2
+  Port: 3306
+  DBName: simple_admin
+  Username: root
+  Password: simple-admin.
+  MaxOpenConn: 100
+  SSLMode: disable
+  CacheTime: 5
+
+CasbinConf:
+  ModelText: |
+    [request_definition]
+    r = sub, obj, act
+    [policy_definition]
+    p = sub, obj, act
+    [role_definition]
+    g = _, _
+    [policy_effect]
+    e = some(where (p.eft == allow))
+    [matchers]
+    m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
+
