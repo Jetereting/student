@@ -2,7 +2,7 @@ package base
 
 import (
 	"context"
-
+	"school/ent/migrate"
 	"school/internal/svc"
 	"school/internal/types"
 
@@ -24,7 +24,10 @@ func NewInitDatabaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Init
 }
 
 func (l *InitDatabaseLogic) InitDatabase() (resp *types.BaseMsgResp, err error) {
-	// todo: add your logic here and delete this line
-
+	l.ctx = context.Background()
+	l.svcCtx.DB.Schema.Create(l.ctx, migrate.WithForeignKeys(false),
+		migrate.WithDropColumn(true),
+		migrate.WithDropIndex(true),
+	)
 	return
 }
