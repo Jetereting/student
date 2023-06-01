@@ -2,8 +2,41 @@
 
 package ent
 
+import (
+	"school/ent/schema"
+	"school/ent/student"
+	"time"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	studentMixin := schema.Student{}.Mixin()
+	studentMixinFields0 := studentMixin[0].Fields()
+	_ = studentMixinFields0
+	studentMixinFields1 := studentMixin[1].Fields()
+	_ = studentMixinFields1
+	studentMixinFields2 := studentMixin[2].Fields()
+	_ = studentMixinFields2
+	studentFields := schema.Student{}.Fields()
+	_ = studentFields
+	// studentDescCreatedAt is the schema descriptor for created_at field.
+	studentDescCreatedAt := studentMixinFields0[1].Descriptor()
+	// student.DefaultCreatedAt holds the default value on creation for the created_at field.
+	student.DefaultCreatedAt = studentDescCreatedAt.Default.(func() time.Time)
+	// studentDescUpdatedAt is the schema descriptor for updated_at field.
+	studentDescUpdatedAt := studentMixinFields0[2].Descriptor()
+	// student.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	student.DefaultUpdatedAt = studentDescUpdatedAt.Default.(func() time.Time)
+	// student.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	student.UpdateDefaultUpdatedAt = studentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// studentDescSort is the schema descriptor for sort field.
+	studentDescSort := studentMixinFields1[0].Descriptor()
+	// student.DefaultSort holds the default value on creation for the sort field.
+	student.DefaultSort = studentDescSort.Default.(uint32)
+	// studentDescStatus is the schema descriptor for status field.
+	studentDescStatus := studentMixinFields2[0].Descriptor()
+	// student.DefaultStatus holds the default value on creation for the status field.
+	student.DefaultStatus = studentDescStatus.Default.(uint8)
 }

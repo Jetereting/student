@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -18,11 +19,31 @@ var (
 		Columns:    SchoolsColumns,
 		PrimaryKey: []*schema.Column{SchoolsColumns[0]},
 	}
+	// BStudentColumns holds the columns for the "b_student" table.
+	BStudentColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "sort", Type: field.TypeUint32, Default: 1},
+		{Name: "status", Type: field.TypeUint8, Nullable: true, Default: 1},
+		{Name: "name", Type: field.TypeJSON},
+		{Name: "id_card", Type: field.TypeJSON},
+	}
+	// BStudentTable holds the schema information for the "b_student" table.
+	BStudentTable = &schema.Table{
+		Name:       "b_student",
+		Columns:    BStudentColumns,
+		PrimaryKey: []*schema.Column{BStudentColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SchoolsTable,
+		BStudentTable,
 	}
 )
 
 func init() {
+	BStudentTable.Annotation = &entsql.Annotation{
+		Table: "b_student",
+	}
 }

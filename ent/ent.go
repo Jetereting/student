@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"reflect"
 	"school/ent/school"
+	"school/ent/student"
 	"sync"
 
 	"entgo.io/ent"
@@ -73,7 +74,8 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			school.Table: school.ValidColumn,
+			school.Table:  school.ValidColumn,
+			student.Table: student.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

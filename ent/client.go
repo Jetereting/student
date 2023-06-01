@@ -11,6 +11,7 @@ import (
 	"school/ent/migrate"
 
 	"school/ent/school"
+	"school/ent/student"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -24,6 +25,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// School is the client for interacting with the School builders.
 	School *SchoolClient
+	// Student is the client for interacting with the Student builders.
+	Student *StudentClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -38,6 +41,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.School = NewSchoolClient(c.config)
+	c.Student = NewStudentClient(c.config)
 }
 
 type (
@@ -118,9 +122,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		School: NewSchoolClient(cfg),
+		ctx:     ctx,
+		config:  cfg,
+		School:  NewSchoolClient(cfg),
+		Student: NewStudentClient(cfg),
 	}, nil
 }
 
@@ -138,9 +143,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		School: NewSchoolClient(cfg),
+		ctx:     ctx,
+		config:  cfg,
+		School:  NewSchoolClient(cfg),
+		Student: NewStudentClient(cfg),
 	}, nil
 }
 
@@ -170,12 +176,14 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.School.Use(hooks...)
+	c.Student.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.School.Intercept(interceptors...)
+	c.Student.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -183,6 +191,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *SchoolMutation:
 		return c.School.mutate(ctx, m)
+	case *StudentMutation:
+		return c.Student.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -306,12 +316,130 @@ func (c *SchoolClient) mutate(ctx context.Context, m *SchoolMutation) (Value, er
 	}
 }
 
+// StudentClient is a client for the Student schema.
+type StudentClient struct {
+	config
+}
+
+// NewStudentClient returns a client for the Student from the given config.
+func NewStudentClient(c config) *StudentClient {
+	return &StudentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `student.Hooks(f(g(h())))`.
+func (c *StudentClient) Use(hooks ...Hook) {
+	c.hooks.Student = append(c.hooks.Student, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `student.Intercept(f(g(h())))`.
+func (c *StudentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Student = append(c.inters.Student, interceptors...)
+}
+
+// Create returns a builder for creating a Student entity.
+func (c *StudentClient) Create() *StudentCreate {
+	mutation := newStudentMutation(c.config, OpCreate)
+	return &StudentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Student entities.
+func (c *StudentClient) CreateBulk(builders ...*StudentCreate) *StudentCreateBulk {
+	return &StudentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Student.
+func (c *StudentClient) Update() *StudentUpdate {
+	mutation := newStudentMutation(c.config, OpUpdate)
+	return &StudentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StudentClient) UpdateOne(s *Student) *StudentUpdateOne {
+	mutation := newStudentMutation(c.config, OpUpdateOne, withStudent(s))
+	return &StudentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StudentClient) UpdateOneID(id uint64) *StudentUpdateOne {
+	mutation := newStudentMutation(c.config, OpUpdateOne, withStudentID(id))
+	return &StudentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Student.
+func (c *StudentClient) Delete() *StudentDelete {
+	mutation := newStudentMutation(c.config, OpDelete)
+	return &StudentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StudentClient) DeleteOne(s *Student) *StudentDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StudentClient) DeleteOneID(id uint64) *StudentDeleteOne {
+	builder := c.Delete().Where(student.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StudentDeleteOne{builder}
+}
+
+// Query returns a query builder for Student.
+func (c *StudentClient) Query() *StudentQuery {
+	return &StudentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStudent},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Student entity by its id.
+func (c *StudentClient) Get(ctx context.Context, id uint64) (*Student, error) {
+	return c.Query().Where(student.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StudentClient) GetX(ctx context.Context, id uint64) *Student {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StudentClient) Hooks() []Hook {
+	return c.hooks.Student
+}
+
+// Interceptors returns the client interceptors.
+func (c *StudentClient) Interceptors() []Interceptor {
+	return c.inters.Student
+}
+
+func (c *StudentClient) mutate(ctx context.Context, m *StudentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StudentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StudentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StudentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StudentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Student mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		School []ent.Hook
+		School, Student []ent.Hook
 	}
 	inters struct {
-		School []ent.Interceptor
+		School, Student []ent.Interceptor
 	}
 )
