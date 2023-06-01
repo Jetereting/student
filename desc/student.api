@@ -1,0 +1,77 @@
+import "base.api"
+
+type (
+    // The response data of student information | Student信息
+    StudentInfo {
+        BaseIDInfo
+
+        // Sort
+        Sort  uint32 `json:"sort,optional"`
+
+        // Status
+        Status  uint8 `json:"status,optional"`
+
+        // Name
+        Name  json.RawMessage `json:"name,optional"`
+
+        // IdCard
+        IdCard  json.RawMessage `json:"idCard,optional"`
+    }
+
+    // The response data of student list | Student列表数据
+    StudentListResp {
+        BaseDataInfo
+
+        // Student list data | Student列表数据
+        Data StudentListInfo `json:"data"`
+    }
+
+    // Student list data | Student列表数据
+    StudentListInfo {
+        BaseListInfo
+
+        // The API list data | Student列表数据
+        Data  []StudentInfo  `json:"data"`
+    }
+
+    // Get student list request params | Student列表请求参数
+    StudentListReq {
+        PageInfo
+    }
+
+    // Student information response | Student信息返回体
+    StudentInfoResp {
+        BaseDataInfo
+
+        // Student information | Student数据
+        Data StudentInfo `json:"data"`
+    }
+)
+
+@server(
+    jwt: Auth
+    group: student
+    middleware: Authority
+)
+
+service School {
+    // Create student information | 创建Student
+    @handler createStudent
+    post /student/create (StudentInfo) returns (BaseMsgResp)
+
+    // Update student information | 更新Student
+    @handler updateStudent
+    post /student/update (StudentInfo) returns (BaseMsgResp)
+
+    // Delete student information | 删除Student信息
+    @handler deleteStudent
+    post /student/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get student list | 获取Student列表
+    @handler getStudentList
+    post /student/list (StudentListReq) returns (StudentListResp)
+
+    // Get student by ID | 通过ID获取Student
+    @handler getStudentById
+    post /student (IDReq) returns (StudentInfoResp)
+}
