@@ -1,0 +1,77 @@
+import "base.api"
+
+type (
+    // The response data of class information | Class信息
+    ClassInfo {
+        BaseIDInfo
+
+        // Sort
+        Sort  uint32 `json:"sort,optional"`
+
+        // Status
+        Status  uint8 `json:"status,optional"`
+
+        // Name
+        Name  string `json:"name,optional"`
+    }
+
+    // The response data of class list | Class列表数据
+    ClassListResp {
+        BaseDataInfo
+
+        // Class list data | Class列表数据
+        Data ClassListInfo `json:"data"`
+    }
+
+    // Class list data | Class列表数据
+    ClassListInfo {
+        BaseListInfo
+
+        // The API list data | Class列表数据
+        Data  []ClassInfo  `json:"data"`
+    }
+
+    // Get class list request params | Class列表请求参数
+    ClassListReq {
+        PageInfo
+
+        // Name
+        Name  string `json:"name,optional"`
+    }
+
+    // Class information response | Class信息返回体
+    ClassInfoResp {
+        BaseDataInfo
+
+        // Class information | Class数据
+        Data ClassInfo `json:"data"`
+    }
+)
+
+@server(
+    jwt: Auth
+    group: class
+    middleware: Authority
+)
+
+service School {
+    // Create class information | 创建Class
+    @handler createClass
+    post /class/create (ClassInfo) returns (BaseMsgResp)
+
+    // Update class information | 更新Class
+    @handler updateClass
+    post /class/update (ClassInfo) returns (BaseMsgResp)
+
+    // Delete class information | 删除Class信息
+    @handler deleteClass
+    post /class/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get class list | 获取Class列表
+    @handler getClassList
+    post /class/list (ClassListReq) returns (ClassListResp)
+
+    // Get class by ID | 通过ID获取Class
+    @handler getClassById
+    post /class (IDReq) returns (ClassInfoResp)
+}

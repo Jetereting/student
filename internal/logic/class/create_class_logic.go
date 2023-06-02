@@ -1,4 +1,4 @@
-package student
+package class
 
 import (
 	"context"
@@ -12,27 +12,25 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreateStudentLogic struct {
+type CreateClassLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewCreateStudentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateStudentLogic {
-	return &CreateStudentLogic{
+func NewCreateClassLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateClassLogic {
+	return &CreateClassLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *CreateStudentLogic) CreateStudent(req *types.StudentInfo) (*types.BaseMsgResp, error) {
-	_, err := l.svcCtx.DB.Student.Create().
+func (l *CreateClassLogic) CreateClass(req *types.ClassInfo) (*types.BaseMsgResp, error) {
+	_, err := l.svcCtx.DB.Class.Create().
 		SetSort(req.Sort).
 		SetStatus(req.Status).
 		SetName(req.Name).
-		SetIDCard(req.IdCard).
-		SetClassID(req.ClassId).
 		Save(l.ctx)
 
 	if err != nil {

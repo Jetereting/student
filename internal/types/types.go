@@ -124,6 +124,8 @@ type StudentInfo struct {
 	Name string `json:"name,optional"`
 	// IdCard
 	IdCard string `json:"idCard,optional"`
+	// ClassId
+	ClassId uint64 `json:"classId,optional"`
 }
 
 // The response data of student list | Student列表数据
@@ -158,4 +160,48 @@ type StudentInfoResp struct {
 	BaseDataInfo
 	// Student information | Student数据
 	Data StudentInfo `json:"data"`
+}
+
+// The response data of class information | Class信息
+// swagger:model ClassInfo
+type ClassInfo struct {
+	BaseIDInfo
+	// Sort
+	Sort uint32 `json:"sort,optional"`
+	// Status
+	Status uint8 `json:"status,optional"`
+	// Name
+	Name string `json:"name,optional"`
+}
+
+// The response data of class list | Class列表数据
+// swagger:model ClassListResp
+type ClassListResp struct {
+	BaseDataInfo
+	// Class list data | Class列表数据
+	Data ClassListInfo `json:"data"`
+}
+
+// Class list data | Class列表数据
+// swagger:model ClassListInfo
+type ClassListInfo struct {
+	BaseListInfo
+	// The API list data | Class列表数据
+	Data []ClassInfo `json:"data"`
+}
+
+// Get class list request params | Class列表请求参数
+// swagger:model ClassListReq
+type ClassListReq struct {
+	PageInfo
+	// Name
+	Name string `json:"name,optional"`
+}
+
+// Class information response | Class信息返回体
+// swagger:model ClassInfoResp
+type ClassInfoResp struct {
+	BaseDataInfo
+	// Class information | Class数据
+	Data ClassInfo `json:"data"`
 }

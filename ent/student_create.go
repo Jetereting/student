@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"school/ent/class"
 	"school/ent/student"
 	"time"
 
@@ -82,9 +83,31 @@ func (sc *StudentCreate) SetName(s string) *StudentCreate {
 	return sc
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (sc *StudentCreate) SetNillableName(s *string) *StudentCreate {
+	if s != nil {
+		sc.SetName(*s)
+	}
+	return sc
+}
+
 // SetIDCard sets the "id_card" field.
 func (sc *StudentCreate) SetIDCard(s string) *StudentCreate {
 	sc.mutation.SetIDCard(s)
+	return sc
+}
+
+// SetClassID sets the "class_id" field.
+func (sc *StudentCreate) SetClassID(u uint64) *StudentCreate {
+	sc.mutation.SetClassID(u)
+	return sc
+}
+
+// SetNillableClassID sets the "class_id" field if the given value is not nil.
+func (sc *StudentCreate) SetNillableClassID(u *uint64) *StudentCreate {
+	if u != nil {
+		sc.SetClassID(*u)
+	}
 	return sc
 }
 
@@ -92,6 +115,11 @@ func (sc *StudentCreate) SetIDCard(s string) *StudentCreate {
 func (sc *StudentCreate) SetID(u uint64) *StudentCreate {
 	sc.mutation.SetID(u)
 	return sc
+}
+
+// SetClass sets the "class" edge to the Class entity.
+func (sc *StudentCreate) SetClass(c *Class) *StudentCreate {
+	return sc.SetClassID(c.ID)
 }
 
 // Mutation returns the StudentMutation object of the builder.
@@ -144,6 +172,10 @@ func (sc *StudentCreate) defaults() {
 	if _, ok := sc.mutation.Status(); !ok {
 		v := student.DefaultStatus
 		sc.mutation.SetStatus(v)
+	}
+	if _, ok := sc.mutation.Name(); !ok {
+		v := student.DefaultName
+		sc.mutation.SetName(v)
 	}
 }
 
@@ -219,6 +251,23 @@ func (sc *StudentCreate) createSpec() (*Student, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.IDCard(); ok {
 		_spec.SetField(student.FieldIDCard, field.TypeString, value)
 		_node.IDCard = value
+	}
+	if nodes := sc.mutation.ClassIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   student.ClassTable,
+			Columns: []string{student.ClassColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(class.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ClassID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

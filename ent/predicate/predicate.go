@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Class is the predicate function for class builders.
+type Class func(*sql.Selector)
+
 // School is the predicate function for school builders.
 type School func(*sql.Selector)
 

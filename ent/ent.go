@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"school/ent/class"
 	"school/ent/school"
 	"school/ent/student"
 	"sync"
@@ -74,6 +75,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			class.Table:   class.ValidColumn,
 			school.Table:  school.ValidColumn,
 			student.Table: student.ValidColumn,
 		})

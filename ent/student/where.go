@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -82,6 +83,11 @@ func Name(v string) predicate.Student {
 // IDCard applies equality check predicate on the "id_card" field. It's identical to IDCardEQ.
 func IDCard(v string) predicate.Student {
 	return predicate.Student(sql.FieldEQ(FieldIDCard, v))
+}
+
+// ClassID applies equality check predicate on the "class_id" field. It's identical to ClassIDEQ.
+func ClassID(v uint64) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldClassID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -382,6 +388,59 @@ func IDCardEqualFold(v string) predicate.Student {
 // IDCardContainsFold applies the ContainsFold predicate on the "id_card" field.
 func IDCardContainsFold(v string) predicate.Student {
 	return predicate.Student(sql.FieldContainsFold(FieldIDCard, v))
+}
+
+// ClassIDEQ applies the EQ predicate on the "class_id" field.
+func ClassIDEQ(v uint64) predicate.Student {
+	return predicate.Student(sql.FieldEQ(FieldClassID, v))
+}
+
+// ClassIDNEQ applies the NEQ predicate on the "class_id" field.
+func ClassIDNEQ(v uint64) predicate.Student {
+	return predicate.Student(sql.FieldNEQ(FieldClassID, v))
+}
+
+// ClassIDIn applies the In predicate on the "class_id" field.
+func ClassIDIn(vs ...uint64) predicate.Student {
+	return predicate.Student(sql.FieldIn(FieldClassID, vs...))
+}
+
+// ClassIDNotIn applies the NotIn predicate on the "class_id" field.
+func ClassIDNotIn(vs ...uint64) predicate.Student {
+	return predicate.Student(sql.FieldNotIn(FieldClassID, vs...))
+}
+
+// ClassIDIsNil applies the IsNil predicate on the "class_id" field.
+func ClassIDIsNil() predicate.Student {
+	return predicate.Student(sql.FieldIsNull(FieldClassID))
+}
+
+// ClassIDNotNil applies the NotNil predicate on the "class_id" field.
+func ClassIDNotNil() predicate.Student {
+	return predicate.Student(sql.FieldNotNull(FieldClassID))
+}
+
+// HasClass applies the HasEdge predicate on the "class" edge.
+func HasClass() predicate.Student {
+	return predicate.Student(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ClassTable, ClassColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasClassWith applies the HasEdge predicate on the "class" edge with a given conditions (other predicates).
+func HasClassWith(preds ...predicate.Class) predicate.Student {
+	return predicate.Student(func(s *sql.Selector) {
+		step := newClassStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

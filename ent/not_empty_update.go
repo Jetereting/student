@@ -3,6 +3,54 @@
 package ent
 
 // set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdate) SetNotEmptySort(value uint32) *ClassUpdate {
+	if value != 0 {
+		return c.SetSort(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdateOne) SetNotEmptySort(value uint32) *ClassUpdateOne {
+	if value != 0 {
+		return c.SetSort(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdate) SetNotEmptyStatus(value uint8) *ClassUpdate {
+	if value != 0 {
+		return c.SetStatus(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdateOne) SetNotEmptyStatus(value uint8) *ClassUpdateOne {
+	if value != 0 {
+		return c.SetStatus(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdate) SetNotEmptyName(value string) *ClassUpdate {
+	if value != "" {
+		return c.SetName(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (c *ClassUpdateOne) SetNotEmptyName(value string) *ClassUpdateOne {
+	if value != "" {
+		return c.SetName(value)
+	}
+	return c
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
 func (s *StudentUpdate) SetNotEmptySort(value uint32) *StudentUpdate {
 	if value != 0 {
 		return s.SetSort(value)
@@ -62,6 +110,22 @@ func (s *StudentUpdate) SetNotEmptyIDCard(value string) *StudentUpdate {
 func (s *StudentUpdateOne) SetNotEmptyIDCard(value string) *StudentUpdateOne {
 	if value != "" {
 		return s.SetIDCard(value)
+	}
+	return s
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdate) SetNotEmptyClassID(value uint64) *StudentUpdate {
+	if value != 0 {
+		return s.SetClassID(value)
+	}
+	return s
+}
+
+// set field if value is not empty. e.g. string does not equal to ""
+func (s *StudentUpdateOne) SetNotEmptyClassID(value uint64) *StudentUpdateOne {
+	if value != 0 {
+		return s.SetClassID(value)
 	}
 	return s
 }

@@ -1,4 +1,4 @@
-package student
+package class
 
 import (
 	"context"
@@ -11,42 +11,40 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetStudentByIdLogic struct {
+type GetClassByIdLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetStudentByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetStudentByIdLogic {
-	return &GetStudentByIdLogic{
+func NewGetClassByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetClassByIdLogic {
+	return &GetClassByIdLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetStudentByIdLogic) GetStudentById(req *types.IDReq) (*types.StudentInfoResp, error) {
-	data, err := l.svcCtx.DB.Student.Get(l.ctx, req.Id)
+func (l *GetClassByIdLogic) GetClassById(req *types.IDReq) (*types.ClassInfoResp, error) {
+	data, err := l.svcCtx.DB.Class.Get(l.ctx, req.Id)
 	if err != nil {
 		return nil, dberrorhandler.DefaultEntError(l.Logger, err, req)
 	}
 
-	return &types.StudentInfoResp{
+	return &types.ClassInfoResp{
 		BaseDataInfo: types.BaseDataInfo{
 			Code: 0,
 			Msg:  l.svcCtx.Trans.Trans(l.ctx, i18n.Success),
 		},
-		Data: types.StudentInfo{
+		Data: types.ClassInfo{
 			BaseIDInfo: types.BaseIDInfo{
 				Id:        data.ID,
 				CreatedAt: data.CreatedAt.UnixMilli(),
 				UpdatedAt: data.UpdatedAt.UnixMilli(),
 			},
-			Sort:    data.Sort,
-			Status:  data.Status,
-			Name:    data.Name,
-			IdCard:  data.IDCard,
-			ClassId: data.ClassID,
+			Sort:   data.Sort,
+			Status: data.Status,
+			Name:   data.Name,
 		},
 	}, nil
 }

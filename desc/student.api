@@ -16,6 +16,9 @@ type (
 
         // IdCard
         IdCard  string `json:"idCard,optional"`
+
+        // ClassId
+        ClassId  uint64 `json:"classId,optional"`
     }
 
     // The response data of student list | Student列表数据

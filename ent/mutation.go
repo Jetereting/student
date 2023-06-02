@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"school/ent/class"
 	"school/ent/predicate"
 	"school/ent/student"
 	"sync"
@@ -24,9 +25,743 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeClass   = "Class"
 	TypeSchool  = "School"
 	TypeStudent = "Student"
 )
+
+// ClassMutation represents an operation that mutates the Class nodes in the graph.
+type ClassMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint64
+	created_at      *time.Time
+	updated_at      *time.Time
+	sort            *uint32
+	addsort         *int32
+	status          *uint8
+	addstatus       *int8
+	name            *string
+	clearedFields   map[string]struct{}
+	students        map[uint64]struct{}
+	removedstudents map[uint64]struct{}
+	clearedstudents bool
+	done            bool
+	oldValue        func(context.Context) (*Class, error)
+	predicates      []predicate.Class
+}
+
+var _ ent.Mutation = (*ClassMutation)(nil)
+
+// classOption allows management of the mutation configuration using functional options.
+type classOption func(*ClassMutation)
+
+// newClassMutation creates new mutation for the Class entity.
+func newClassMutation(c config, op Op, opts ...classOption) *ClassMutation {
+	m := &ClassMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeClass,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withClassID sets the ID field of the mutation.
+func withClassID(id uint64) classOption {
+	return func(m *ClassMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Class
+		)
+		m.oldValue = func(ctx context.Context) (*Class, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Class.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withClass sets the old Class of the mutation.
+func withClass(node *Class) classOption {
+	return func(m *ClassMutation) {
+		m.oldValue = func(context.Context) (*Class, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ClassMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ClassMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Class entities.
+func (m *ClassMutation) SetID(id uint64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ClassMutation) ID() (id uint64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ClassMutation) IDs(ctx context.Context) ([]uint64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Class.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ClassMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ClassMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Class entity.
+// If the Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClassMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ClassMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ClassMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ClassMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Class entity.
+// If the Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClassMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ClassMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetSort sets the "sort" field.
+func (m *ClassMutation) SetSort(u uint32) {
+	m.sort = &u
+	m.addsort = nil
+}
+
+// Sort returns the value of the "sort" field in the mutation.
+func (m *ClassMutation) Sort() (r uint32, exists bool) {
+	v := m.sort
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSort returns the old "sort" field's value of the Class entity.
+// If the Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClassMutation) OldSort(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSort: %w", err)
+	}
+	return oldValue.Sort, nil
+}
+
+// AddSort adds u to the "sort" field.
+func (m *ClassMutation) AddSort(u int32) {
+	if m.addsort != nil {
+		*m.addsort += u
+	} else {
+		m.addsort = &u
+	}
+}
+
+// AddedSort returns the value that was added to the "sort" field in this mutation.
+func (m *ClassMutation) AddedSort() (r int32, exists bool) {
+	v := m.addsort
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSort resets all changes to the "sort" field.
+func (m *ClassMutation) ResetSort() {
+	m.sort = nil
+	m.addsort = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ClassMutation) SetStatus(u uint8) {
+	m.status = &u
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ClassMutation) Status() (r uint8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Class entity.
+// If the Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClassMutation) OldStatus(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds u to the "status" field.
+func (m *ClassMutation) AddStatus(u int8) {
+	if m.addstatus != nil {
+		*m.addstatus += u
+	} else {
+		m.addstatus = &u
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *ClassMutation) AddedStatus() (r int8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *ClassMutation) ClearStatus() {
+	m.status = nil
+	m.addstatus = nil
+	m.clearedFields[class.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *ClassMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[class.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ClassMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+	delete(m.clearedFields, class.FieldStatus)
+}
+
+// SetName sets the "name" field.
+func (m *ClassMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ClassMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Class entity.
+// If the Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClassMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ClassMutation) ResetName() {
+	m.name = nil
+}
+
+// AddStudentIDs adds the "students" edge to the Student entity by ids.
+func (m *ClassMutation) AddStudentIDs(ids ...uint64) {
+	if m.students == nil {
+		m.students = make(map[uint64]struct{})
+	}
+	for i := range ids {
+		m.students[ids[i]] = struct{}{}
+	}
+}
+
+// ClearStudents clears the "students" edge to the Student entity.
+func (m *ClassMutation) ClearStudents() {
+	m.clearedstudents = true
+}
+
+// StudentsCleared reports if the "students" edge to the Student entity was cleared.
+func (m *ClassMutation) StudentsCleared() bool {
+	return m.clearedstudents
+}
+
+// RemoveStudentIDs removes the "students" edge to the Student entity by IDs.
+func (m *ClassMutation) RemoveStudentIDs(ids ...uint64) {
+	if m.removedstudents == nil {
+		m.removedstudents = make(map[uint64]struct{})
+	}
+	for i := range ids {
+		delete(m.students, ids[i])
+		m.removedstudents[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedStudents returns the removed IDs of the "students" edge to the Student entity.
+func (m *ClassMutation) RemovedStudentsIDs() (ids []uint64) {
+	for id := range m.removedstudents {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// StudentsIDs returns the "students" edge IDs in the mutation.
+func (m *ClassMutation) StudentsIDs() (ids []uint64) {
+	for id := range m.students {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetStudents resets all changes to the "students" edge.
+func (m *ClassMutation) ResetStudents() {
+	m.students = nil
+	m.clearedstudents = false
+	m.removedstudents = nil
+}
+
+// Where appends a list predicates to the ClassMutation builder.
+func (m *ClassMutation) Where(ps ...predicate.Class) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ClassMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ClassMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Class, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ClassMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ClassMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Class).
+func (m *ClassMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ClassMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, class.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, class.FieldUpdatedAt)
+	}
+	if m.sort != nil {
+		fields = append(fields, class.FieldSort)
+	}
+	if m.status != nil {
+		fields = append(fields, class.FieldStatus)
+	}
+	if m.name != nil {
+		fields = append(fields, class.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ClassMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case class.FieldCreatedAt:
+		return m.CreatedAt()
+	case class.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case class.FieldSort:
+		return m.Sort()
+	case class.FieldStatus:
+		return m.Status()
+	case class.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ClassMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case class.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case class.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case class.FieldSort:
+		return m.OldSort(ctx)
+	case class.FieldStatus:
+		return m.OldStatus(ctx)
+	case class.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown Class field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ClassMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case class.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case class.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case class.FieldSort:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSort(v)
+		return nil
+	case class.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case class.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Class field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ClassMutation) AddedFields() []string {
+	var fields []string
+	if m.addsort != nil {
+		fields = append(fields, class.FieldSort)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, class.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ClassMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case class.FieldSort:
+		return m.AddedSort()
+	case class.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ClassMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case class.FieldSort:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSort(v)
+		return nil
+	case class.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Class numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ClassMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(class.FieldStatus) {
+		fields = append(fields, class.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ClassMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ClassMutation) ClearField(name string) error {
+	switch name {
+	case class.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Class nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ClassMutation) ResetField(name string) error {
+	switch name {
+	case class.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case class.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case class.FieldSort:
+		m.ResetSort()
+		return nil
+	case class.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case class.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown Class field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ClassMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.students != nil {
+		edges = append(edges, class.EdgeStudents)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ClassMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case class.EdgeStudents:
+		ids := make([]ent.Value, 0, len(m.students))
+		for id := range m.students {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ClassMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedstudents != nil {
+		edges = append(edges, class.EdgeStudents)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ClassMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case class.EdgeStudents:
+		ids := make([]ent.Value, 0, len(m.removedstudents))
+		for id := range m.removedstudents {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ClassMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedstudents {
+		edges = append(edges, class.EdgeStudents)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ClassMutation) EdgeCleared(name string) bool {
+	switch name {
+	case class.EdgeStudents:
+		return m.clearedstudents
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ClassMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Class unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ClassMutation) ResetEdge(name string) error {
+	switch name {
+	case class.EdgeStudents:
+		m.ResetStudents()
+		return nil
+	}
+	return fmt.Errorf("unknown Class edge %s", name)
+}
 
 // SchoolMutation represents an operation that mutates the School nodes in the graph.
 type SchoolMutation struct {
@@ -307,6 +1042,8 @@ type StudentMutation struct {
 	name          *string
 	id_card       *string
 	clearedFields map[string]struct{}
+	class         *uint64
+	clearedclass  bool
 	done          bool
 	oldValue      func(context.Context) (*Student, error)
 	predicates    []predicate.Student
@@ -686,6 +1423,81 @@ func (m *StudentMutation) ResetIDCard() {
 	m.id_card = nil
 }
 
+// SetClassID sets the "class_id" field.
+func (m *StudentMutation) SetClassID(u uint64) {
+	m.class = &u
+}
+
+// ClassID returns the value of the "class_id" field in the mutation.
+func (m *StudentMutation) ClassID() (r uint64, exists bool) {
+	v := m.class
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClassID returns the old "class_id" field's value of the Student entity.
+// If the Student object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StudentMutation) OldClassID(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClassID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClassID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClassID: %w", err)
+	}
+	return oldValue.ClassID, nil
+}
+
+// ClearClassID clears the value of the "class_id" field.
+func (m *StudentMutation) ClearClassID() {
+	m.class = nil
+	m.clearedFields[student.FieldClassID] = struct{}{}
+}
+
+// ClassIDCleared returns if the "class_id" field was cleared in this mutation.
+func (m *StudentMutation) ClassIDCleared() bool {
+	_, ok := m.clearedFields[student.FieldClassID]
+	return ok
+}
+
+// ResetClassID resets all changes to the "class_id" field.
+func (m *StudentMutation) ResetClassID() {
+	m.class = nil
+	delete(m.clearedFields, student.FieldClassID)
+}
+
+// ClearClass clears the "class" edge to the Class entity.
+func (m *StudentMutation) ClearClass() {
+	m.clearedclass = true
+}
+
+// ClassCleared reports if the "class" edge to the Class entity was cleared.
+func (m *StudentMutation) ClassCleared() bool {
+	return m.ClassIDCleared() || m.clearedclass
+}
+
+// ClassIDs returns the "class" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ClassID instead. It exists only for internal usage by the builders.
+func (m *StudentMutation) ClassIDs() (ids []uint64) {
+	if id := m.class; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetClass resets all changes to the "class" edge.
+func (m *StudentMutation) ResetClass() {
+	m.class = nil
+	m.clearedclass = false
+}
+
 // Where appends a list predicates to the StudentMutation builder.
 func (m *StudentMutation) Where(ps ...predicate.Student) {
 	m.predicates = append(m.predicates, ps...)
@@ -720,7 +1532,7 @@ func (m *StudentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *StudentMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, student.FieldCreatedAt)
 	}
@@ -738,6 +1550,9 @@ func (m *StudentMutation) Fields() []string {
 	}
 	if m.id_card != nil {
 		fields = append(fields, student.FieldIDCard)
+	}
+	if m.class != nil {
+		fields = append(fields, student.FieldClassID)
 	}
 	return fields
 }
@@ -759,6 +1574,8 @@ func (m *StudentMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case student.FieldIDCard:
 		return m.IDCard()
+	case student.FieldClassID:
+		return m.ClassID()
 	}
 	return nil, false
 }
@@ -780,6 +1597,8 @@ func (m *StudentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case student.FieldIDCard:
 		return m.OldIDCard(ctx)
+	case student.FieldClassID:
+		return m.OldClassID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Student field %s", name)
 }
@@ -830,6 +1649,13 @@ func (m *StudentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIDCard(v)
+		return nil
+	case student.FieldClassID:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClassID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Student field %s", name)
@@ -891,6 +1717,9 @@ func (m *StudentMutation) ClearedFields() []string {
 	if m.FieldCleared(student.FieldStatus) {
 		fields = append(fields, student.FieldStatus)
 	}
+	if m.FieldCleared(student.FieldClassID) {
+		fields = append(fields, student.FieldClassID)
+	}
 	return fields
 }
 
@@ -907,6 +1736,9 @@ func (m *StudentMutation) ClearField(name string) error {
 	switch name {
 	case student.FieldStatus:
 		m.ClearStatus()
+		return nil
+	case student.FieldClassID:
+		m.ClearClassID()
 		return nil
 	}
 	return fmt.Errorf("unknown Student nullable field %s", name)
@@ -934,25 +1766,37 @@ func (m *StudentMutation) ResetField(name string) error {
 	case student.FieldIDCard:
 		m.ResetIDCard()
 		return nil
+	case student.FieldClassID:
+		m.ResetClassID()
+		return nil
 	}
 	return fmt.Errorf("unknown Student field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *StudentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.class != nil {
+		edges = append(edges, student.EdgeClass)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *StudentMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case student.EdgeClass:
+		if id := m.class; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *StudentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -964,24 +1808,41 @@ func (m *StudentMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *StudentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedclass {
+		edges = append(edges, student.EdgeClass)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *StudentMutation) EdgeCleared(name string) bool {
+	switch name {
+	case student.EdgeClass:
+		return m.clearedclass
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *StudentMutation) ClearEdge(name string) error {
+	switch name {
+	case student.EdgeClass:
+		m.ClearClass()
+		return nil
+	}
 	return fmt.Errorf("unknown Student unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *StudentMutation) ResetEdge(name string) error {
+	switch name {
+	case student.EdgeClass:
+		m.ResetClass()
+		return nil
+	}
 	return fmt.Errorf("unknown Student edge %s", name)
 }

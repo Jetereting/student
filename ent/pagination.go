@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"school/ent/class"
 	"school/ent/school"
 	"school/ent/student"
 )
@@ -54,6 +55,85 @@ func (o OrderDirection) reverse() OrderDirection {
 }
 
 const errInvalidPagination = "INVALID_PAGINATION"
+
+type ClassPager struct {
+	Order  class.OrderOption
+	Filter func(*ClassQuery) (*ClassQuery, error)
+}
+
+// ClassPaginateOption enables pagination customization.
+type ClassPaginateOption func(*ClassPager)
+
+// DefaultClassOrder is the default ordering of Class.
+var DefaultClassOrder = Desc(class.FieldID)
+
+func newClassPager(opts []ClassPaginateOption) (*ClassPager, error) {
+	pager := &ClassPager{}
+	for _, opt := range opts {
+		opt(pager)
+	}
+	if pager.Order == nil {
+		pager.Order = DefaultClassOrder
+	}
+	return pager, nil
+}
+
+func (p *ClassPager) ApplyFilter(query *ClassQuery) (*ClassQuery, error) {
+	if p.Filter != nil {
+		return p.Filter(query)
+	}
+	return query, nil
+}
+
+// ClassPageList is Class PageList result.
+type ClassPageList struct {
+	List        []*Class     `json:"list"`
+	PageDetails *PageDetails `json:"pageDetails"`
+}
+
+func (c *ClassQuery) Page(
+	ctx context.Context, pageNum uint64, pageSize uint64, opts ...ClassPaginateOption,
+) (*ClassPageList, error) {
+
+	pager, err := newClassPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if c, err = pager.ApplyFilter(c); err != nil {
+		return nil, err
+	}
+
+	ret := &ClassPageList{}
+
+	ret.PageDetails = &PageDetails{
+		Page: pageNum,
+		Size: pageSize,
+	}
+
+	count, err := c.Clone().Count(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ret.PageDetails.Total = uint64(count)
+
+	if pager.Order != nil {
+		c = c.Order(pager.Order)
+	} else {
+		c = c.Order(DefaultClassOrder)
+	}
+
+	c = c.Offset(int((pageNum - 1) * pageSize)).Limit(int(pageSize))
+	list, err := c.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ret.List = list
+
+	return ret, nil
+}
 
 type SchoolPager struct {
 	Order  school.OrderOption

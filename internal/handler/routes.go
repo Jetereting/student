@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	base "school/internal/handler/base"
+	class "school/internal/handler/class"
 	student "school/internal/handler/student"
 	"school/internal/svc"
 
@@ -50,6 +51,40 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/student",
 					Handler: student.GetStudentByIdHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Authority},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/class/create",
+					Handler: class.CreateClassHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/class/update",
+					Handler: class.UpdateClassHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/class/delete",
+					Handler: class.DeleteClassHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/class/list",
+					Handler: class.GetClassListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/class",
+					Handler: class.GetClassByIdHandler(serverCtx),
 				},
 			}...,
 		),

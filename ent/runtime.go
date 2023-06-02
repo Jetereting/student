@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"school/ent/class"
 	"school/ent/schema"
 	"school/ent/student"
 	"time"
@@ -12,6 +13,33 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	classMixin := schema.Class{}.Mixin()
+	classMixinFields0 := classMixin[0].Fields()
+	_ = classMixinFields0
+	classMixinFields1 := classMixin[1].Fields()
+	_ = classMixinFields1
+	classMixinFields2 := classMixin[2].Fields()
+	_ = classMixinFields2
+	classFields := schema.Class{}.Fields()
+	_ = classFields
+	// classDescCreatedAt is the schema descriptor for created_at field.
+	classDescCreatedAt := classMixinFields0[1].Descriptor()
+	// class.DefaultCreatedAt holds the default value on creation for the created_at field.
+	class.DefaultCreatedAt = classDescCreatedAt.Default.(func() time.Time)
+	// classDescUpdatedAt is the schema descriptor for updated_at field.
+	classDescUpdatedAt := classMixinFields0[2].Descriptor()
+	// class.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	class.DefaultUpdatedAt = classDescUpdatedAt.Default.(func() time.Time)
+	// class.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	class.UpdateDefaultUpdatedAt = classDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// classDescSort is the schema descriptor for sort field.
+	classDescSort := classMixinFields1[0].Descriptor()
+	// class.DefaultSort holds the default value on creation for the sort field.
+	class.DefaultSort = classDescSort.Default.(uint32)
+	// classDescStatus is the schema descriptor for status field.
+	classDescStatus := classMixinFields2[0].Descriptor()
+	// class.DefaultStatus holds the default value on creation for the status field.
+	class.DefaultStatus = classDescStatus.Default.(uint8)
 	studentMixin := schema.Student{}.Mixin()
 	studentMixinFields0 := studentMixin[0].Fields()
 	_ = studentMixinFields0
@@ -39,4 +67,8 @@ func init() {
 	studentDescStatus := studentMixinFields2[0].Descriptor()
 	// student.DefaultStatus holds the default value on creation for the status field.
 	student.DefaultStatus = studentDescStatus.Default.(uint8)
+	// studentDescName is the schema descriptor for name field.
+	studentDescName := studentFields[0].Descriptor()
+	// student.DefaultName holds the default value on creation for the name field.
+	student.DefaultName = studentDescName.Default.(string)
 }

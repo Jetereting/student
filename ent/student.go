@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"school/ent/class"
 	"school/ent/student"
 	"strings"
 	"time"
@@ -28,8 +29,35 @@ type Student struct {
 	// 姓名
 	Name string `json:"name,omitempty"`
 	// 身份证号
-	IDCard       string `json:"id_card,omitempty"`
+	IDCard string `json:"id_card,omitempty"`
+	// 班级代码
+	ClassID uint64 `json:"class_id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the StudentQuery when eager-loading is set.
+	Edges        StudentEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// StudentEdges holds the relations/edges for other nodes in the graph.
+type StudentEdges struct {
+	// 班级
+	Class *Class `json:"class,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// ClassOrErr returns the Class value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e StudentEdges) ClassOrErr() (*Class, error) {
+	if e.loadedTypes[0] {
+		if e.Class == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: class.Label}
+		}
+		return e.Class, nil
+	}
+	return nil, &NotLoadedError{edge: "class"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -37,7 +65,7 @@ func (*Student) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case student.FieldID, student.FieldSort, student.FieldStatus:
+		case student.FieldID, student.FieldSort, student.FieldStatus, student.FieldClassID:
 			values[i] = new(sql.NullInt64)
 		case student.FieldName, student.FieldIDCard:
 			values[i] = new(sql.NullString)
@@ -100,6 +128,12 @@ func (s *Student) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.IDCard = value.String
 			}
+		case student.FieldClassID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field class_id", values[i])
+			} else if value.Valid {
+				s.ClassID = uint64(value.Int64)
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -111,6 +145,11 @@ func (s *Student) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (s *Student) Value(name string) (ent.Value, error) {
 	return s.selectValues.Get(name)
+}
+
+// QueryClass queries the "class" edge of the Student entity.
+func (s *Student) QueryClass() *ClassQuery {
+	return NewStudentClient(s.config).QueryClass(s)
 }
 
 // Update returns a builder for updating this Student.
@@ -153,6 +192,9 @@ func (s *Student) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("id_card=")
 	builder.WriteString(s.IDCard)
+	builder.WriteString(", ")
+	builder.WriteString("class_id=")
+	builder.WriteString(fmt.Sprintf("%v", s.ClassID))
 	builder.WriteByte(')')
 	return builder.String()
 }

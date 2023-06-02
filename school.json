@@ -1,0 +1,859 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Description: school service",
+    "title": "school",
+    "version": "0.0.1"
+  },
+  "host": "localhost:9100",
+  "basePath": "/",
+  "paths": {
+    "/class": {
+      "post": {
+        "description": "Get class by ID | 通过ID获取Class",
+        "tags": [
+          "class"
+        ],
+        "summary": "Get class by ID | 通过ID获取Class",
+        "operationId": "GetClassById",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/IDReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ClassInfoResp",
+            "schema": {
+              "$ref": "#/definitions/ClassInfoResp"
+            }
+          }
+        }
+      }
+    },
+    "/class/create": {
+      "post": {
+        "description": "Create class information | 创建Class",
+        "tags": [
+          "class"
+        ],
+        "summary": "Create class information | 创建Class",
+        "operationId": "CreateClass",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/ClassInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/class/delete": {
+      "post": {
+        "description": "Delete class information | 删除Class信息",
+        "tags": [
+          "class"
+        ],
+        "summary": "Delete class information | 删除Class信息",
+        "operationId": "DeleteClass",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/IDsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/class/list": {
+      "post": {
+        "description": "Get class list | 获取Class列表",
+        "tags": [
+          "class"
+        ],
+        "summary": "Get class list | 获取Class列表",
+        "operationId": "GetClassList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/ClassListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ClassListResp",
+            "schema": {
+              "$ref": "#/definitions/ClassListResp"
+            }
+          }
+        }
+      }
+    },
+    "/class/update": {
+      "post": {
+        "description": "Update class information | 更新Class",
+        "tags": [
+          "class"
+        ],
+        "summary": "Update class information | 更新Class",
+        "operationId": "UpdateClass",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/ClassInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/init/database": {
+      "get": {
+        "description": "Initialize database | 初始化数据库",
+        "tags": [
+          "base"
+        ],
+        "summary": "Initialize database | 初始化数据库",
+        "operationId": "InitDatabase",
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/student": {
+      "post": {
+        "description": "Get student by ID | 通过ID获取Student",
+        "tags": [
+          "student"
+        ],
+        "summary": "Get student by ID | 通过ID获取Student",
+        "operationId": "GetStudentById",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/IDReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "StudentInfoResp",
+            "schema": {
+              "$ref": "#/definitions/StudentInfoResp"
+            }
+          }
+        }
+      }
+    },
+    "/student/create": {
+      "post": {
+        "description": "Create student information | 创建Student",
+        "tags": [
+          "student"
+        ],
+        "summary": "Create student information | 创建Student",
+        "operationId": "CreateStudent",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StudentInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/student/delete": {
+      "post": {
+        "description": "Delete student information | 删除Student信息",
+        "tags": [
+          "student"
+        ],
+        "summary": "Delete student information | 删除Student信息",
+        "operationId": "DeleteStudent",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/IDsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    },
+    "/student/list": {
+      "post": {
+        "description": "Get student list | 获取Student列表",
+        "tags": [
+          "student"
+        ],
+        "summary": "Get student list | 获取Student列表",
+        "operationId": "GetStudentList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StudentListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "StudentListResp",
+            "schema": {
+              "$ref": "#/definitions/StudentListResp"
+            }
+          }
+        }
+      }
+    },
+    "/student/update": {
+      "post": {
+        "description": "Update student information | 更新Student",
+        "tags": [
+          "student"
+        ],
+        "summary": "Update student information | 更新Student",
+        "operationId": "UpdateStudent",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StudentInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BaseMsgResp",
+            "schema": {
+              "$ref": "#/definitions/BaseMsgResp"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BaseDataInfo": {
+      "description": "The basic response with data | 基础带数据信息",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "BaseIDInfo": {
+      "description": "The base ID response data | 基础ID信息",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Create date | 创建日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "description": "ID",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Id"
+        },
+        "updatedAt": {
+          "description": "Update date | 更新日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "BaseListInfo": {
+      "description": "The basic response with data | 基础带数据信息",
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data"
+        },
+        "total": {
+          "description": "The total number of data | 数据总数",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "BaseMsgResp": {
+      "description": "The basic response without data | 基础不带数据信息",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "BaseUUIDInfo": {
+      "description": "The base UUID response data | 基础UUID信息",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Create date | 创建日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "description": "ID",
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "updatedAt": {
+          "description": "Update date | 更新日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "ClassInfo": {
+      "description": "The response data of class information | Class信息",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Create date | 创建日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "description": "ID",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Id"
+        },
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "sort": {
+          "description": "Sort",
+          "type": "integer",
+          "format": "uint32",
+          "x-go-name": "Sort"
+        },
+        "status": {
+          "description": "Status",
+          "type": "integer",
+          "format": "uint8",
+          "x-go-name": "Status"
+        },
+        "updatedAt": {
+          "description": "Update date | 更新日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "ClassInfoResp": {
+      "description": "Class information response | Class信息返回体",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data",
+          "$ref": "#/definitions/ClassInfo"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "ClassListInfo": {
+      "description": "Class list data | Class列表数据",
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "The API list data | Class列表数据",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClassInfo"
+          },
+          "x-go-name": "Data"
+        },
+        "total": {
+          "description": "The total number of data | 数据总数",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "ClassListReq": {
+      "description": "Get class list request params | Class列表请求参数",
+      "type": "object",
+      "required": [
+        "page",
+        "pageSize"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "page": {
+          "description": "Page number | 第几页",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Page"
+        },
+        "pageSize": {
+          "description": "Page size | 单页数据行数",
+          "type": "integer",
+          "format": "uint64",
+          "maximum": 100000,
+          "x-go-name": "PageSize"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "ClassListResp": {
+      "description": "The response data of class list | Class列表数据",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data",
+          "$ref": "#/definitions/ClassListInfo"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "IDPathReq": {
+      "description": "Basic ID request | 基础ID地址参数请求",
+      "type": "object",
+      "required": [
+        "Id"
+      ],
+      "properties": {
+        "Id": {
+          "description": "ID",
+          "type": "integer",
+          "format": "uint64"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "IDReq": {
+      "description": "Basic ID request | 基础ID参数请求",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "description": "ID",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Id"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "IDsReq": {
+      "description": "Basic IDs request | 基础ID数组参数请求",
+      "type": "object",
+      "required": [
+        "ids"
+      ],
+      "properties": {
+        "ids": {
+          "description": "IDs",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "x-go-name": "Ids"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "PageInfo": {
+      "description": "The page request parameters | 列表请求参数",
+      "type": "object",
+      "required": [
+        "page",
+        "pageSize"
+      ],
+      "properties": {
+        "page": {
+          "description": "Page number | 第几页",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Page"
+        },
+        "pageSize": {
+          "description": "Page size | 单页数据行数",
+          "type": "integer",
+          "format": "uint64",
+          "maximum": 100000,
+          "x-go-name": "PageSize"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "StudentInfo": {
+      "description": "The response data of student information | Student信息",
+      "type": "object",
+      "properties": {
+        "classId": {
+          "description": "ClassId",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ClassId"
+        },
+        "createdAt": {
+          "description": "Create date | 创建日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "description": "ID",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Id"
+        },
+        "idCard": {
+          "description": "IdCard",
+          "type": "string",
+          "x-go-name": "IdCard"
+        },
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "sort": {
+          "description": "Sort",
+          "type": "integer",
+          "format": "uint32",
+          "x-go-name": "Sort"
+        },
+        "status": {
+          "description": "Status",
+          "type": "integer",
+          "format": "uint8",
+          "x-go-name": "Status"
+        },
+        "updatedAt": {
+          "description": "Update date | 更新日期",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "StudentInfoResp": {
+      "description": "Student information response | Student信息返回体",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data",
+          "$ref": "#/definitions/StudentInfo"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "StudentListInfo": {
+      "description": "Student list data | Student列表数据",
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "The API list data | Student列表数据",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StudentInfo"
+          },
+          "x-go-name": "Data"
+        },
+        "total": {
+          "description": "The total number of data | 数据总数",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "StudentListReq": {
+      "description": "Get student list request params | Student列表请求参数",
+      "type": "object",
+      "required": [
+        "page",
+        "pageSize"
+      ],
+      "properties": {
+        "idCard": {
+          "description": "IdCard",
+          "type": "string",
+          "x-go-name": "IdCard"
+        },
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "page": {
+          "description": "Page number | 第几页",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Page"
+        },
+        "pageSize": {
+          "description": "Page size | 单页数据行数",
+          "type": "integer",
+          "format": "uint64",
+          "maximum": 100000,
+          "x-go-name": "PageSize"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "StudentListResp": {
+      "description": "The response data of student list | Student列表数据",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code | 错误代码",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "data": {
+          "description": "Data | 数据",
+          "type": "string",
+          "x-go-name": "Data",
+          "$ref": "#/definitions/StudentListInfo"
+        },
+        "msg": {
+          "description": "Message | 提示信息",
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "UUIDReq": {
+      "description": "Basic UUID request | 基础UUID参数请求",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "description": "ID",
+          "type": "string",
+          "maxLength": 36,
+          "x-go-name": "Id"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    },
+    "UUIDsReq": {
+      "description": "Basic UUID array request | 基础UUID数组参数请求",
+      "type": "object",
+      "required": [
+        "ids"
+      ],
+      "properties": {
+        "ids": {
+          "description": "Ids",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Ids"
+        }
+      },
+      "x-go-package": "school/internal/types"
+    }
+  },
+  "responses": {
+    "SimpleMsg": {
+      "description": "The simplest message | 最简单的信息",
+      "headers": {
+        "msg": {
+          "type": "string",
+          "description": "Message | 信息"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Token": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Token": [
+        "[]"
+      ]
+    }
+  ]
+}

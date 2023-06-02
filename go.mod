@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.12.3
 	github.com/casbin/casbin/v2 v2.69.1
 	github.com/suyuan32/simple-admin-common v1.0.7
+	github.com/tidwall/gjson v1.14.4
 	github.com/zeromicro/go-zero v1.5.2
 )
 
@@ -65,6 +66,8 @@ require (
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/redis/go-redis/v9 v9.0.5 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/zclconf/go-cty v1.13.1 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.16.0 // indirect
