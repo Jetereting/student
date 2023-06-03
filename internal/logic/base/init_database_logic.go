@@ -43,7 +43,11 @@ func (l *InitDatabaseLogic) InitDatabase() (resp *types.BaseMsgResp, err error) 
 		return
 	}
 	// 给管理员添加所有权限
-	_, err = l.svcCtx.DB.QueryContext(l.ctx, `insert into casbin_rules (ptype, v0, v1, v2) select 'p','001',path,method from sys_apis where not exists(select path,method from casbin_rules where ptype='p' and v0='001');`)
+	_, err = l.svcCtx.DB.QueryContext(l.ctx, `
+	insert into casbin_rules (ptype, v0, v1, v2)
+select 'p', '001', path, method from sys_apis s
+left join casbin_rules c on s.path=c.v1 and s.method=c.v2 and c.ptype='p' and c.v0='001'
+where c.id is null;`)
 	if err != nil {
 		logx.Error(err)
 		return
