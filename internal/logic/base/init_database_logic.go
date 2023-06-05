@@ -52,6 +52,12 @@ where c.id is null;`)
 		logx.Error(err)
 		return
 	}
+	// 更新casbin
+	err = l.svcCtx.Casbin.LoadPolicy()
+	if err != nil {
+		logx.Error(err)
+		return
+	}
 	return
 }
 

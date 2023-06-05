@@ -39,6 +39,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:    c,
 		Authority: middleware.NewAuthorityMiddleware(cbn, rds, trans).Handle,
+		Casbin:    cbn,
 		Trans:     trans,
 		DB:        db,
 	}
